@@ -3,7 +3,7 @@ import tensorflow as tf
 
 conv1d = tf.layers.conv1d
 
-def attn_head(seq, out_sz, bias_mat, activation, in_drop=0.0, coef_drop=0.0, residual=False):
+def attn_head(seq, out_sz, bias_mat, activation, in_drop=0.0, coef_drop=0.0, residual=False, return_attn=False):
     with tf.name_scope('my_attn'):
         if in_drop != 0.0:
             seq = tf.nn.dropout(seq, 1.0 - in_drop)
@@ -30,8 +30,10 @@ def attn_head(seq, out_sz, bias_mat, activation, in_drop=0.0, coef_drop=0.0, res
                 ret = ret + conv1d(seq, ret.shape[-1], 1) # activation
             else:
                 ret = ret + seq
-
-        return activation(ret)  # activation
+        if return_attn :
+            return activation(ret), coefs
+        else :
+            return activation(ret)  # activation
 
 # Experimental sparse attention head (for running on datasets such as Pubmed)
 # N.B. Because of limitations of current TF implementation, will work _only_ if batch_size = 1!

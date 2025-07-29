@@ -2,7 +2,10 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from models import GAT
+# from models import GAT
+# from models import GATcut
+from models import GATdsu
+# from models import GATbfs
 from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
@@ -19,7 +22,9 @@ hid_units = [8] # numbers of hidden units per each attention head in each layer
 n_heads = [8, 1] # additional entry for the output layer
 residual = False
 nonlinearity = tf.nn.elu
-model = GAT
+model = GATdsu
+# model = GATbfs
+# model = GATcut
 
 print('Dataset: ' + dataset)
 print('----- Opt. hyperparams -----')
@@ -63,6 +68,18 @@ with tf.Graph().as_default():
         ffd_drop = tf.placeholder(dtype=tf.float32, shape=())
         is_train = tf.placeholder(dtype=tf.bool, shape=())
 
+    # logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+    #                             attn_drop, ffd_drop,
+    #                             bias_mat=bias_in,
+    #                             hid_units=hid_units, n_heads=n_heads,
+    #                             residual=residual, activation=nonlinearity)
+    # logits, all_attn_maps= model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+    #                             attn_drop, ffd_drop,
+    #                             bias_mat=bias_in,
+    #                             hid_units=hid_units, n_heads=n_heads,
+    #                             residual=residual, activation=nonlinearity,
+    #                             neighbor_threshold=0.1, top_k_neighbors=10)
+    
     logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
                                 attn_drop, ffd_drop,
                                 bias_mat=bias_in,
