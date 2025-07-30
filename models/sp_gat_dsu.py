@@ -4,7 +4,7 @@ from utils import layers
 from models.base_gattn import BaseGAttN
 from scipy.sparse.csgraph import connected_components
 
-class GATdsu(BaseGAttN):
+class SpGATdsu(BaseGAttN):
     @staticmethod
     def cluster_nodes(attention_matrix, epsilon):
         if not isinstance(attention_matrix, np.ndarray):

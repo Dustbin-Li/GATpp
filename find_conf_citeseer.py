@@ -12,7 +12,7 @@ if not os.path.exists(RESULTS_DIR):
     os.makedirs(RESULTS_DIR)
 
 # 数据集
-DATASET = 'cora'
+DATASET = 'citeseer'
 
 # 训练参数
 BATCH_SIZE = 1
@@ -317,7 +317,7 @@ def run_parameter_search():
     best_results = {}
     
     # 为每种方法运行参数搜索
-    for method in ['bfs']:
+    for method in ['gat', 'bfs', 'cut', 'dsu']:
         print(f"\n{'='*50}")
         print(f"Starting parameter search for {method.upper()}")
         print(f"Parameter space: {PARAM_SPACES[method]}")

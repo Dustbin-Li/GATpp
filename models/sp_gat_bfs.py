@@ -5,7 +5,7 @@ from collections import deque
 from utils import layers
 from models.base_gattn import BaseGAttN
 
-class GATbfs(BaseGAttN):
+class SpGATbfs(BaseGAttN):
     @staticmethod
     def create_bfs_bias(atten_coefs, epsilon, max_hops, nb_nodes):
         adj_bool = (atten_coefs >= epsilon)

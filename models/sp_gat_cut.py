@@ -4,7 +4,7 @@ import tensorflow as tf
 from utils import layers
 from models.base_gattn import BaseGAttN
 
-class GATcut(BaseGAttN):
+class SpGATcut(BaseGAttN):
     @staticmethod
     def create_filtered_bias(atten_coefs, neighbor_threshold, top_k_neighbors, nb_nodes):
         if len(atten_coefs.shape) == 3:
