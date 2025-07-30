@@ -1,0 +1,72 @@
+GAT Model Parameter Search Results
+Dataset: cora
+Date: 20250730-121808
+
+Fixed Parameters:
+  Batch Size: 1
+  Learning Rate: 0.005
+  L2 Coef: 0.0005
+  Hidden Units: [8]
+  Attention Heads: [8, 1]
+  Residual: False
+  Nonlinearity: elu
+  Max Epochs: 100000
+  Patience: 100
+
+Best Results Summary:
+BFS:
+  Params: {'epsilon': 0.25, 'max_hops': 2}
+  Validation Accuracy: 0.8220
+  Test Accuracy: 0.8190
+
+Detailed Results:
+
+BFS Results:
+  Run 1:
+    Params: {'epsilon': 0.0, 'max_hops': 2}
+    Val Acc: 0.3160
+    Test Acc: 0.3190
+  Run 2:
+    Params: {'epsilon': 0.0, 'max_hops': 3}
+    Val Acc: 0.3160
+    Test Acc: 0.3190
+  Run 3:
+    Params: {'epsilon': 0.1, 'max_hops': 2}
+    Val Acc: 0.8120
+    Test Acc: 0.8120
+  Run 4:
+    Params: {'epsilon': 0.1, 'max_hops': 3}
+    Val Acc: 0.7960
+    Test Acc: 0.8160
+  Run 5:
+    Params: {'epsilon': 0.15, 'max_hops': 2}
+    Val Acc: 0.8180
+    Test Acc: 0.8110
+  Run 6:
+    Params: {'epsilon': 0.15, 'max_hops': 3}
+    Val Acc: 0.8140
+    Test Acc: 0.7960
+  Run 7:
+    Params: {'epsilon': 0.2, 'max_hops': 2}
+    Val Acc: 0.8140
+    Test Acc: 0.8110
+  Run 8:
+    Params: {'epsilon': 0.2, 'max_hops': 3}
+    Val Acc: 0.8140
+    Test Acc: 0.8140
+  Run 9:
+    Params: {'epsilon': 0.25, 'max_hops': 2}
+    Val Acc: 0.8220
+    Test Acc: 0.8190
+  Run 10:
+    Params: {'epsilon': 0.25, 'max_hops': 3}
+    Val Acc: 0.8120
+    Test Acc: 0.8280
+  Run 11:
+    Params: {'epsilon': 0.3, 'max_hops': 2}
+    Val Acc: 0.8100
+    Test Acc: 0.8100
+  Run 12:
+    Params: {'epsilon': 0.3, 'max_hops': 3}
+    Val Acc: 0.8200
+    Test Acc: 0.8210

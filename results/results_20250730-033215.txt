@@ -1,0 +1,230 @@
+GAT Model Parameter Search Results
+Dataset: cora
+Date: 20250730-033215
+
+Fixed Parameters:
+  Batch Size: 1
+  Learning Rate: 0.005
+  L2 Coef: 0.0005
+  Hidden Units: [8]
+  Attention Heads: [8, 1]
+  Residual: False
+  Nonlinearity: elu
+  Max Epochs: 100000
+  Patience: 100
+
+Best Results Summary:
+GAT:
+  Params: {}
+  Validation Accuracy: 0.8080
+  Test Accuracy: 0.8180
+
+CUT:
+  Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 0}
+  Validation Accuracy: 0.8240
+  Test Accuracy: 0.8240
+
+BFS:
+  Params: {}
+  Validation Accuracy: 0.0000
+  Test Accuracy: 0.0000
+
+DSU:
+  Params: {'epsilon': 0.1, 'fusion_method': 'gate'}
+  Validation Accuracy: 0.8260
+  Test Accuracy: 0.8280
+
+Detailed Results:
+
+GAT Results:
+  Run 1:
+    Params: {}
+    Val Acc: 0.8080
+    Test Acc: 0.8180
+
+CUT Results:
+  Run 1:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 0}
+    Val Acc: 0.8240
+    Test Acc: 0.8240
+  Run 2:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 5}
+    Val Acc: 0.7940
+    Test Acc: 0.8150
+  Run 3:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 10}
+    Val Acc: 0.7680
+    Test Acc: 0.8000
+  Run 4:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 15}
+    Val Acc: 0.6140
+    Test Acc: 0.6250
+  Run 5:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 6:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 5}
+    Val Acc: 0.8100
+    Test Acc: 0.8210
+  Run 7:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 10}
+    Val Acc: 0.7880
+    Test Acc: 0.8140
+  Run 8:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 15}
+    Val Acc: 0.7100
+    Test Acc: 0.7190
+  Run 9:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 10:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 5}
+    Val Acc: 0.8140
+    Test Acc: 0.8250
+  Run 11:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 10}
+    Val Acc: 0.7880
+    Test Acc: 0.8090
+  Run 12:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 15}
+    Val Acc: 0.7580
+    Test Acc: 0.7760
+  Run 13:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 14:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 5}
+    Val Acc: 0.7940
+    Test Acc: 0.8120
+  Run 15:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 10}
+    Val Acc: 0.7680
+    Test Acc: 0.7950
+  Run 16:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 15}
+    Val Acc: 0.7760
+    Test Acc: 0.7740
+
+BFS Results:
+  Run 1:
+    Params: {'epsilon': 0.0, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 2:
+    Params: {'epsilon': 0.0, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 3:
+    Params: {'epsilon': 0.1, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 4:
+    Params: {'epsilon': 0.1, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 5:
+    Params: {'epsilon': 0.15, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 6:
+    Params: {'epsilon': 0.15, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 7:
+    Params: {'epsilon': 0.2, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 8:
+    Params: {'epsilon': 0.2, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 9:
+    Params: {'epsilon': 0.25, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 10:
+    Params: {'epsilon': 0.25, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 11:
+    Params: {'epsilon': 0.3, 'max_hops': 2}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+  Run 12:
+    Params: {'epsilon': 0.3, 'max_hops': 3}
+    Error: Tried to convert 'tensor' to a tensor and failed. Error: Dimension 3 in both shapes must be equal, but are 7 and 2708. Shapes are [1,1,2708,7] and [1,1,2708,2708].
+	From merging shape 0 with other shapes. for 'Reshape/packed' (op: 'Pack') with input shapes: [1,1,2708,7], [1,1,2708,2708].
+
+DSU Results:
+  Run 1:
+    Params: {'epsilon': 0.05, 'fusion_method': 'add'}
+    Val Acc: 0.8200
+    Test Acc: 0.8250
+  Run 2:
+    Params: {'epsilon': 0.05, 'fusion_method': 'concat'}
+    Val Acc: 0.8140
+    Test Acc: 0.8180
+  Run 3:
+    Params: {'epsilon': 0.05, 'fusion_method': 'gate'}
+    Val Acc: 0.8240
+    Test Acc: 0.8350
+  Run 4:
+    Params: {'epsilon': 0.1, 'fusion_method': 'add'}
+    Val Acc: 0.8140
+    Test Acc: 0.7850
+  Run 5:
+    Params: {'epsilon': 0.1, 'fusion_method': 'concat'}
+    Val Acc: 0.8160
+    Test Acc: 0.8160
+  Run 6:
+    Params: {'epsilon': 0.1, 'fusion_method': 'gate'}
+    Val Acc: 0.8260
+    Test Acc: 0.8280
+  Run 7:
+    Params: {'epsilon': 0.15, 'fusion_method': 'add'}
+    Val Acc: 0.8140
+    Test Acc: 0.8190
+  Run 8:
+    Params: {'epsilon': 0.15, 'fusion_method': 'concat'}
+    Val Acc: 0.8180
+    Test Acc: 0.8060
+  Run 9:
+    Params: {'epsilon': 0.15, 'fusion_method': 'gate'}
+    Val Acc: 0.8240
+    Test Acc: 0.8400
+  Run 10:
+    Params: {'epsilon': 0.2, 'fusion_method': 'add'}
+    Val Acc: 0.8140
+    Test Acc: 0.8220
+  Run 11:
+    Params: {'epsilon': 0.2, 'fusion_method': 'concat'}
+    Val Acc: 0.8140
+    Test Acc: 0.8160
+  Run 12:
+    Params: {'epsilon': 0.2, 'fusion_method': 'gate'}
+    Val Acc: 0.8120
+    Test Acc: 0.8190
+  Run 13:
+    Params: {'epsilon': 0.25, 'fusion_method': 'add'}
+    Val Acc: 0.8200
+    Test Acc: 0.8240
+  Run 14:
+    Params: {'epsilon': 0.25, 'fusion_method': 'concat'}
+    Val Acc: 0.8160
+    Test Acc: 0.8330
+  Run 15:
+    Params: {'epsilon': 0.25, 'fusion_method': 'gate'}
+    Val Acc: 0.8240
+    Test Acc: 0.8230
+  Run 16:
+    Params: {'epsilon': 0.3, 'fusion_method': 'add'}
+    Val Acc: 0.8140
+    Test Acc: 0.8250
+  Run 17:
+    Params: {'epsilon': 0.3, 'fusion_method': 'concat'}
+    Val Acc: 0.8180
+    Test Acc: 0.8340
+  Run 18:
+    Params: {'epsilon': 0.3, 'fusion_method': 'gate'}
+    Val Acc: 0.8260
+    Test Acc: 0.8070

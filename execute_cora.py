@@ -2,17 +2,18 @@ import time
 import numpy as np
 import tensorflow as tf
 
-# from models import GAT
-# from models import GATcut
+from models import GAT
+from models import GATcut
 from models import GATdsu
-# from models import GATbfs
+from models import GATbfs
 from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
 
-dataset = 'cora'
+dataset = 'citeseer'
 
 # training params
+methods = 'gat'
 batch_size = 1
 nb_epochs = 100000
 patience = 100
@@ -22,9 +23,14 @@ hid_units = [8] # numbers of hidden units per each attention head in each layer
 n_heads = [8, 1] # additional entry for the output layer
 residual = False
 nonlinearity = tf.nn.elu
-model = GATdsu
-# model = GATbfs
-# model = GATcut
+if methods == 'gat':
+    model = GAT
+elif methods == 'cut':
+    model = GATcut
+elif methods == 'bfs':
+    model = GATbfs
+elif methods == 'dsu':
+    model = GATdsu
 
 print('Dataset: ' + dataset)
 print('----- Opt. hyperparams -----')
@@ -67,24 +73,33 @@ with tf.Graph().as_default():
         attn_drop = tf.placeholder(dtype=tf.float32, shape=())
         ffd_drop = tf.placeholder(dtype=tf.float32, shape=())
         is_train = tf.placeholder(dtype=tf.bool, shape=())
-
-    # logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
-    #                             attn_drop, ffd_drop,
-    #                             bias_mat=bias_in,
-    #                             hid_units=hid_units, n_heads=n_heads,
-    #                             residual=residual, activation=nonlinearity)
-    # logits, all_attn_maps= model.inference(ftr_in, nb_classes, nb_nodes, is_train,
-    #                             attn_drop, ffd_drop,
-    #                             bias_mat=bias_in,
-    #                             hid_units=hid_units, n_heads=n_heads,
-    #                             residual=residual, activation=nonlinearity,
-    #                             neighbor_threshold=0.1, top_k_neighbors=10)
-    
-    logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+    if methods == 'gat':
+        logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
                                 attn_drop, ffd_drop,
                                 bias_mat=bias_in,
                                 hid_units=hid_units, n_heads=n_heads,
                                 residual=residual, activation=nonlinearity)
+    elif methods == 'cut':
+        logits, all_attn_maps= model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+                                attn_drop, ffd_drop,
+                                bias_mat=bias_in,
+                                hid_units=hid_units, n_heads=n_heads,
+                                residual=residual, activation=nonlinearity,
+                                neighbor_threshold=0.1, top_k_neighbors=10) 
+    elif methods == 'bfs':
+        logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+                                attn_drop, ffd_drop,
+                                bias_mat=bias_in,
+                                hid_units=hid_units, n_heads=n_heads,
+                                residual=residual, activation=nonlinearity,
+                                epsilon=0.2, max_hops=2)
+    elif methods == 'dsu':
+        logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+                                attn_drop, ffd_drop,
+                                bias_mat=bias_in,
+                                hid_units=hid_units, n_heads=n_heads,
+                                residual=residual, activation=nonlinearity,
+                                epsilon=0.1, fusion_method='gate')
     log_resh = tf.reshape(logits, [-1, nb_classes])
     lab_resh = tf.reshape(lbl_in, [-1, nb_classes])
     msk_resh = tf.reshape(msk_in, [-1])
