@@ -591,9 +591,15 @@ Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构�
 可以发现，GATv2 在 Pubmed 数据集上的表现最佳，Test Acc 达到 0.7830，与 Cora 和 Citeseer 数据集相当。SuperGAT-MX 和 SuperGAT-SD 的表现与 GATv2 相似，但整体略低于 GAT。总体来看，GATv2 在 Pubmed 数据集上的表现优于其他方法。
 
 
+=== 不足与展望
 
+\
 
+在实验结果的反馈中，我们可以清楚的发现在面对较大数据集PubMed时，无论是我们的GAT++还是各类改进模型，都没有表现出良好的性能，因此在sparse数据集中，我们提出了以下构想，称为SparseGAT++。
 
+\
+
+针对稀疏的数据集
 
 
 
@@ -603,3 +609,9 @@ Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构�
 
 == 引用文献
 
+- [1] NodeFormer: A Scalable Graph Structure Learning Transformer forNode Classification
+- [2] GraphMAE: Self-Supervised Masked Graph Autoencoders
+- [3] Graph Contrastive Learning with Augmentations
+- [4] Graph Attention Networks
+- [5] Graph Attention Networks v2
+- [6] HOW TO FIND YOUR FRIENDLY NEIGHBORHOOD: GRAPHATTENTION DESIGN WITH SELF-SUPERVISION
