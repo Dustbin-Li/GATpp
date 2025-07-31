@@ -90,12 +90,9 @@ def load_and_preprocess_data(dataset):
     nb_nodes = features.shape[0]
     ft_size = features.shape[1]
     nb_classes = y_train.shape[1]
-    
-    adj = adj.todense()
-    
+     
     # 添加批次维度
     features = features[np.newaxis]
-    adj = adj[np.newaxis]
     y_train = y_train[np.newaxis]
     y_val = y_val[np.newaxis]
     y_test = y_test[np.newaxis]
@@ -103,7 +100,7 @@ def load_and_preprocess_data(dataset):
     val_mask = val_mask[np.newaxis]
     test_mask = test_mask[np.newaxis]
     
-    biases = process.adj_to_bias(adj, [nb_nodes], nhood=1)
+    biases = process.preprocess_adj_bias(adj)
     
     return {
         'features': features,
@@ -160,7 +157,7 @@ def train_model(method, params, data):
     with tf.Graph().as_default():
         with tf.name_scope('input'):
             ftr_in = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, nb_nodes, ft_size))
-            bias_in = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, nb_nodes, nb_nodes))
+            bias_in = tf.sparse_placeholder(dtype=tf.float32)
             lbl_in = tf.placeholder(dtype=tf.int32, shape=(BATCH_SIZE, nb_nodes, nb_classes))
             msk_in = tf.placeholder(dtype=tf.int32, shape=(BATCH_SIZE, nb_nodes))
             attn_drop = tf.placeholder(dtype=tf.float32, shape=())
@@ -185,6 +182,7 @@ def train_model(method, params, data):
                 residual=RESIDUAL, activation=NONLINEARITY,
                 **params
             )
+            # logits = tf.sparse.to_dense(logits)
         elif method == 'bfs':
             logits, _ = model_class.inference(
                 ftr_in, nb_classes, nb_nodes, is_train,
@@ -194,6 +192,7 @@ def train_model(method, params, data):
                 residual=RESIDUAL, activation=NONLINEARITY,
                 **params
             )
+            # logits = tf.sparse.to_dense(logits)
         elif method == 'dsu':
             logits = model_class.inference(
                 ftr_in, nb_classes, nb_nodes, is_train,
@@ -203,6 +202,7 @@ def train_model(method, params, data):
                 residual=RESIDUAL, activation=NONLINEARITY,
                 **params
             )
+            # logits = tf.sparse.to_dense(logits)
         
         # 损失和准确率计算
         log_resh = tf.reshape(logits, [-1, nb_classes])
@@ -317,7 +317,7 @@ def run_parameter_search():
     best_results = {}
     
     # 为每种方法运行参数搜索
-    for method in ['gat', 'bfs', 'cut', 'dsu']:
+    for method in ['cut', 'dsu', 'gat', 'bfs']:
         print(f"\n{'='*50}")
         print(f"Starting parameter search for {method.upper()}")
         print(f"Parameter space: {PARAM_SPACES[method]}")

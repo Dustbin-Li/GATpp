@@ -5,12 +5,12 @@ import tensorflow as tf
 import argparse
 
 from models import GAT
-from models import SpGAT
+from models import SpGATcut
 from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
 
-dataset = 'cora'
+dataset = 'pubmed'
 
 # training params
 batch_size = 1
@@ -23,7 +23,7 @@ n_heads = [8, 1] # additional entry for the output layer
 residual = False
 nonlinearity = tf.nn.elu
 # model = GAT
-model = SpGAT
+model = SpGATcut
 
 print('Dataset: ' + dataset)
 print('----- Opt. hyperparams -----')
@@ -77,7 +77,7 @@ with tf.Graph().as_default():
         ffd_drop = tf.placeholder(dtype=tf.float32, shape=())
         is_train = tf.placeholder(dtype=tf.bool, shape=())
 
-    logits = model.inference(ftr_in, nb_classes, nb_nodes, is_train,
+    logits, _= model.inference(ftr_in, nb_classes, nb_nodes, is_train,
                                 attn_drop, ffd_drop,
                                 bias_mat=bias_in,
                                 hid_units=hid_units, n_heads=n_heads,

@@ -1,0 +1,230 @@
+GAT Model Parameter Search Results
+Dataset: citeseer
+Date: 20250731-112634
+
+Fixed Parameters:
+  Batch Size: 1
+  Learning Rate: 0.005
+  L2 Coef: 0.0005
+  Hidden Units: [8]
+  Attention Heads: [8, 1]
+  Residual: False
+  Nonlinearity: elu
+  Max Epochs: 100000
+  Patience: 100
+
+Best Results Summary:
+GAT:
+  Params: {}
+  Validation Accuracy: 0.7380
+  Test Accuracy: 0.7270
+
+BFS:
+  Params: {'epsilon': 0.2, 'max_hops': 2}
+  Validation Accuracy: 0.7460
+  Test Accuracy: 0.7170
+
+CUT:
+  Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 0}
+  Validation Accuracy: 0.7480
+  Test Accuracy: 0.7390
+
+DSU:
+  Params: {'epsilon': 0.05, 'fusion_method': 'gate'}
+  Validation Accuracy: 0.7440
+  Test Accuracy: 0.7450
+
+Detailed Results:
+
+GAT Results:
+  Run 1:
+    Params: {}
+    Val Acc: 0.7380
+    Test Acc: 0.7270
+
+BFS Results:
+  Run 1:
+    Params: {'epsilon': 0.0, 'max_hops': 2}
+    Val Acc: 0.2320
+    Test Acc: 0.1810
+  Run 2:
+    Params: {'epsilon': 0.0, 'max_hops': 3}
+    Val Acc: 0.2320
+    Test Acc: 0.1810
+  Run 3:
+    Params: {'epsilon': 0.1, 'max_hops': 2}
+    Val Acc: 0.7360
+    Test Acc: 0.7170
+  Run 4:
+    Params: {'epsilon': 0.1, 'max_hops': 3}
+    Val Acc: 0.7320
+    Test Acc: 0.7250
+  Run 5:
+    Params: {'epsilon': 0.15, 'max_hops': 2}
+    Val Acc: 0.7400
+    Test Acc: 0.7320
+  Run 6:
+    Params: {'epsilon': 0.15, 'max_hops': 3}
+    Val Acc: 0.7420
+    Test Acc: 0.7210
+  Run 7:
+    Params: {'epsilon': 0.2, 'max_hops': 2}
+    Val Acc: 0.7460
+    Test Acc: 0.7170
+  Run 8:
+    Params: {'epsilon': 0.2, 'max_hops': 3}
+    Val Acc: 0.7420
+    Test Acc: 0.7160
+  Run 9:
+    Params: {'epsilon': 0.25, 'max_hops': 2}
+    Val Acc: 0.7440
+    Test Acc: 0.7310
+  Run 10:
+    Params: {'epsilon': 0.25, 'max_hops': 3}
+    Val Acc: 0.7320
+    Test Acc: 0.7240
+  Run 11:
+    Params: {'epsilon': 0.3, 'max_hops': 2}
+    Val Acc: 0.7300
+    Test Acc: 0.7150
+  Run 12:
+    Params: {'epsilon': 0.3, 'max_hops': 3}
+    Val Acc: 0.7300
+    Test Acc: 0.7270
+
+CUT Results:
+  Run 1:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 0}
+    Val Acc: 0.7480
+    Test Acc: 0.7390
+  Run 2:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 5}
+    Val Acc: 0.6860
+    Test Acc: 0.6820
+  Run 3:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 10}
+    Val Acc: 0.5960
+    Test Acc: 0.5920
+  Run 4:
+    Params: {'neighbor_threshold': 0.0, 'top_k_neighbors': 15}
+    Val Acc: 0.4920
+    Test Acc: 0.5100
+  Run 5:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 6:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 5}
+    Val Acc: 0.7140
+    Test Acc: 0.7000
+  Run 7:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 10}
+    Val Acc: 0.6680
+    Test Acc: 0.6430
+  Run 8:
+    Params: {'neighbor_threshold': 0.1, 'top_k_neighbors': 15}
+    Val Acc: 0.6320
+    Test Acc: 0.6310
+  Run 9:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 10:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 5}
+    Val Acc: 0.7220
+    Test Acc: 0.7120
+  Run 11:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 10}
+    Val Acc: 0.6560
+    Test Acc: 0.6560
+  Run 12:
+    Params: {'neighbor_threshold': 0.15, 'top_k_neighbors': 15}
+    Val Acc: 0.5860
+    Test Acc: 0.5860
+  Run 13:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 0}
+    Error: None values not supported.
+  Run 14:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 5}
+    Val Acc: 0.6620
+    Test Acc: 0.6590
+  Run 15:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 10}
+    Val Acc: 0.6680
+    Test Acc: 0.6900
+  Run 16:
+    Params: {'neighbor_threshold': 0.2, 'top_k_neighbors': 15}
+    Val Acc: 0.6280
+    Test Acc: 0.6080
+
+DSU Results:
+  Run 1:
+    Params: {'epsilon': 0.05, 'fusion_method': 'add'}
+    Val Acc: 0.7420
+    Test Acc: 0.7220
+  Run 2:
+    Params: {'epsilon': 0.05, 'fusion_method': 'concat'}
+    Val Acc: 0.7300
+    Test Acc: 0.7200
+  Run 3:
+    Params: {'epsilon': 0.05, 'fusion_method': 'gate'}
+    Val Acc: 0.7440
+    Test Acc: 0.7450
+  Run 4:
+    Params: {'epsilon': 0.1, 'fusion_method': 'add'}
+    Val Acc: 0.7340
+    Test Acc: 0.7360
+  Run 5:
+    Params: {'epsilon': 0.1, 'fusion_method': 'concat'}
+    Val Acc: 0.7440
+    Test Acc: 0.7240
+  Run 6:
+    Params: {'epsilon': 0.1, 'fusion_method': 'gate'}
+    Val Acc: 0.7440
+    Test Acc: 0.7330
+  Run 7:
+    Params: {'epsilon': 0.15, 'fusion_method': 'add'}
+    Val Acc: 0.7300
+    Test Acc: 0.7110
+  Run 8:
+    Params: {'epsilon': 0.15, 'fusion_method': 'concat'}
+    Val Acc: 0.7360
+    Test Acc: 0.7280
+  Run 9:
+    Params: {'epsilon': 0.15, 'fusion_method': 'gate'}
+    Val Acc: 0.7400
+    Test Acc: 0.7140
+  Run 10:
+    Params: {'epsilon': 0.2, 'fusion_method': 'add'}
+    Val Acc: 0.7240
+    Test Acc: 0.7080
+  Run 11:
+    Params: {'epsilon': 0.2, 'fusion_method': 'concat'}
+    Val Acc: 0.7400
+    Test Acc: 0.7190
+  Run 12:
+    Params: {'epsilon': 0.2, 'fusion_method': 'gate'}
+    Val Acc: 0.7340
+    Test Acc: 0.7250
+  Run 13:
+    Params: {'epsilon': 0.25, 'fusion_method': 'add'}
+    Val Acc: 0.7320
+    Test Acc: 0.7180
+  Run 14:
+    Params: {'epsilon': 0.25, 'fusion_method': 'concat'}
+    Val Acc: 0.7440
+    Test Acc: 0.7370
+  Run 15:
+    Params: {'epsilon': 0.25, 'fusion_method': 'gate'}
+    Val Acc: 0.7420
+    Test Acc: 0.7210
+  Run 16:
+    Params: {'epsilon': 0.3, 'fusion_method': 'add'}
+    Val Acc: 0.7320
+    Test Acc: 0.7080
+  Run 17:
+    Params: {'epsilon': 0.3, 'fusion_method': 'concat'}
+    Val Acc: 0.7400
+    Test Acc: 0.7090
+  Run 18:
+    Params: {'epsilon': 0.3, 'fusion_method': 'gate'}
+    Val Acc: 0.7380
+    Test Acc: 0.7180

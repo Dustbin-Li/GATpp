@@ -41,21 +41,22 @@ class SpGATbfs(BaseGAttN):
             output, coef = layers.sp_attn_head(
                 inputs,
                 out_sz=hid_units[0],
-                bias_mat=bias_mat,
+                adj_mat=bias_mat,
                 activation=activation,
+                nb_nodes=nb_nodes,
                 in_drop=ffd_drop,
                 coef_drop=attn_drop,
                 residual=False,
                 return_attn=True
             )
             attns_output.append(output)
-            attns_coefs.append(coef)
+            attns_coefs.append(tf.sparse.to_dense(coef))
         
         h_1 = tf.concat(attns_output, axis=-1)
         avg_attention = tf.reduce_mean(tf.stack(attns_coefs), axis=0)
         all_attention_maps.append(avg_attention)
         
-        new_bias_mat = GATbfs.create_bfs_bias(
+        new_bias_mat = SpGATbfs.create_bfs_bias(
             avg_attention,
             epsilon,
             max_hops,
@@ -69,21 +70,22 @@ class SpGATbfs(BaseGAttN):
             for _ in range(n_heads[i]):
                 output, coef = layers.sp_attn_head(
                     h_1, 
-                    bias_mat=new_bias_mat,
+                    adj_mat=new_bias_mat,
                     out_sz=hid_units[i], 
                     activation=activation,
+                    nb_nodes=nb_nodes,
                     in_drop=ffd_drop, 
                     coef_drop=attn_drop, 
                     residual=residual, 
                     return_attn=True
                 )
                 attns_output.append(output)
-                attns_coefs.append(coef)
+                attns_coefs.append(tf.sparse.to_dense(coef))
             h_1 = tf.concat(attns_output, axis=-1)
             avg_attention = tf.reduce_mean(tf.stack(attns_coefs), axis=0)
             all_attention_maps.append(avg_attention)
             
-            new_bias_mat = GATbfs.create_bfs_bias(
+            new_bias_mat = SpGATbfs.create_bfs_bias(
                 avg_attention,
                 epsilon,
                 max_hops,
@@ -94,9 +96,10 @@ class SpGATbfs(BaseGAttN):
         for i in range(n_heads[-1]):
             out.append(layers.sp_attn_head(
                 h_1, 
-                bias_mat=new_bias_mat,
+                adj_mat=new_bias_mat,
                 out_sz=nb_classes, 
                 activation=lambda x: x,
+                nb_nodes=nb_nodes,
                 in_drop=ffd_drop, 
                 coef_drop=attn_drop, 
                 residual=False,

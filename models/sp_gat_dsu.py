@@ -58,16 +58,17 @@ class SpGATdsu(BaseGAttN):
         for _ in range(n_heads[0]):
             output, attn_coef = layers.sp_attn_head(
                 inputs, 
-                bias_mat=bias_mat,
+                adj_mat=bias_mat,
                 out_sz=hid_units[0], 
                 activation=activation,
+                nb_nodes=nb_nodes,
                 in_drop=ffd_drop, 
                 coef_drop=attn_drop, 
                 residual=False,
                 return_attn=True
             )
             first_layer_outputs.append(output)
-            first_layer_attentions.append(attn_coef)
+            first_layer_attentions.append(tf.sparse.to_dense(attn_coef))
         
         h_1 = tf.concat(first_layer_outputs, axis=-1)
         
@@ -80,8 +81,8 @@ class SpGATdsu(BaseGAttN):
         def cluster_and_fuse(h_features, attn_matrix, eps):
             h_features_2d = np.squeeze(h_features, axis=0)
             
-            clusters = GATdsu.cluster_nodes(attn_matrix, eps)
-            cluster_features = GATdsu.create_cluster_features(h_features_2d, clusters)
+            clusters = SpGATdsu.cluster_nodes(attn_matrix, eps)
+            cluster_features = SpGATdsu.create_cluster_features(h_features_2d, clusters)
             
             return np.expand_dims(cluster_features, axis=0)
         
@@ -115,9 +116,10 @@ class SpGATdsu(BaseGAttN):
             for _ in range(n_heads[i]):
                 attns.append(layers.sp_attn_head(
                     current_input, 
-                    bias_mat=bias_mat,
+                    adj_mat=bias_mat,
                     out_sz=hid_units[i], 
                     activation=activation,
+                    nb_nodes=nb_nodes,
                     in_drop=ffd_drop, 
                     coef_drop=attn_drop, 
                     residual=residual
@@ -128,9 +130,10 @@ class SpGATdsu(BaseGAttN):
         for i in range(n_heads[-1]):
             out.append(layers.sp_attn_head(
                 current_input, 
-                bias_mat=bias_mat,
+                adj_mat=bias_mat,
                 out_sz=nb_classes, 
                 activation=lambda x: x,
+                nb_nodes=nb_nodes,
                 in_drop=ffd_drop, 
                 coef_drop=attn_drop, 
                 residual=False

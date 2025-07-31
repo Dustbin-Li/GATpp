@@ -44,7 +44,6 @@ class SpGATcut(BaseGAttN):
                 tf.zeros_like(atten_coefs),
                 tf.ones_like(atten_coefs) * -1e9
             )
-            
             return bias_mat[tf.newaxis, :, :]
         
     @staticmethod
@@ -58,21 +57,22 @@ class SpGATcut(BaseGAttN):
             output, coef = layers.sp_attn_head(
                 inputs,
                 out_sz=hid_units[0],
-                bias_mat=bias_mat,
+                adj_mat=bias_mat,
                 activation=activation,
+                nb_nodes=nb_nodes,
                 in_drop=ffd_drop,
                 coef_drop=attn_drop,
                 residual=False,
                 return_attn=True
             )
             attns_output.append(output)
-            attns_coefs.append(coef)
+            attns_coefs.append(tf.sparse.to_dense(coef))
         h_1 = tf.concat(attns_output, axis=-1)
         avg_attention = tf.reduce_mean(tf.stack(attns_coefs), axis=0)
         all_attention_maps.append(avg_attention)
         
         if neighbor_threshold > 0 or top_k_neighbors > 0:
-            new_bias_mat = GATcut.create_filtered_bias(
+            new_bias_mat = SpGATcut.create_filtered_bias(
                 avg_attention,
                 neighbor_threshold,
                 top_k_neighbors,
@@ -86,19 +86,20 @@ class SpGATcut(BaseGAttN):
             for _ in range(n_heads[i]):
                 output, coef = layers.sp_attn_head(
                     h_1, 
-                    bias_mat=bias_mat,
+                    adj_mat=bias_mat,
                     out_sz=hid_units[i], 
                     activation=activation,
+                    nb_nodes=nb_nodes,
                     in_drop=ffd_drop, 
                     coef_drop=attn_drop, 
                     residual=residual, 
                     return_attn=True
                 )
                 attns_output.append(output)
-                attns_coefs.append(coef)
+                attns_coefs.append(tf.sparse.to_dense(coef))
             h_1 = tf.concat(attns_output, axis=-1)
             if neighbor_threshold > 0 or top_k_neighbors > 0:
-                new_bias_mat = GATcut.create_filtered_bias(
+                new_bias_mat = SpGATcut.create_filtered_bias(
                     avg_attention,
                     neighbor_threshold,
                     top_k_neighbors,
@@ -107,8 +108,8 @@ class SpGATcut(BaseGAttN):
                 bias_mat = new_bias_mat
         out = []
         for i in range(n_heads[-1]):
-            out.append(layers.sp_attn_head(h_1, bias_mat=bias_mat,
-                out_sz=nb_classes, activation=lambda x: x,
+            out.append(layers.sp_attn_head(h_1, adj_mat=bias_mat,
+                out_sz=nb_classes, activation=lambda x: x, nb_nodes=nb_nodes,
                 in_drop=ffd_drop, coef_drop=attn_drop, residual=False, return_attn=False))
         logits = tf.add_n(out) / n_heads[-1]
     
