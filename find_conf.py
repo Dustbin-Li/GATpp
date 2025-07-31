@@ -12,7 +12,7 @@ if not os.path.exists(RESULTS_DIR):
     os.makedirs(RESULTS_DIR)
 
 # 数据集
-DATASET = 'citeseer'
+DATASET = 'citeseer' # or 'cora' 
 
 # 训练参数
 BATCH_SIZE = 1

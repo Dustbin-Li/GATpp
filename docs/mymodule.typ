@@ -85,47 +85,36 @@
       + reachability = clip(reachability + next_reach, 0, 1)  
     
     + reachability_bool = (reachability > 0) 
-    + bias_mat = where(
-      + reachability_bool, 
-      + 0, 
-      + -inf
-    + )
+    + bias_mat = where(reachability_bool)
     + *Return* expand_dims(bias_mat)
   
   + *Static Method* inference(inputs, nb_classes, nb_nodes, ...):
-    + all_attention_maps = []  
     + new_bias_mat = initial_bias_mat  
-    
-    + attns_output = []
-    + attns_coefs = []
     + *For* n_heads[0] times:
       + output, coef = attn_head(
         + inputs, 
         + bias_mat=new_bias_mat,
         + ...
       + )
-      + attns_output.append(output)
-      + attns_coefs.append(coef)
+      + attns_output.append
+      + attns_coefs.append
     + h = concatenate(attns_output)
     + avg_attention = mean(attns_coefs)
-    + all_attention_maps.append(avg_attention)
+    + all_attention_maps.append
     + new_bias_mat = create_bfs_bias(avg_attention, ...) 
-    
+
     + *For* each subsequent layer:
-      + attns_output = []
-      + attns_coefs = []
       + *For* n_heads[i] times:
         + output, coef = attn_head(...) 
         + ...
       + h = concatenate(attns_output)
       + avg_attention = mean(attns_coefs)
-      + all_attention_maps.append(avg_attention)
+      + all_attention_maps.append
       + new_bias_mat = create_bfs_bias(avg_attention, ...)  
-    
-    + outputs = []
+  
     + *For* n_heads[-1] times:
       + out = attn_head(h, new_bias_mat, ...)
-      + outputs.append(out)
+      + outputs.append
     + logits = average(outputs)
     
     + *Return* logits, all_attention_maps
@@ -150,23 +139,14 @@
 #pseudocode-list[
 + *Class* GATdsu(*BaseGAttN*):
     + *Static Method* cluster_nodes(attention_matrix, epsilon):
-        + *If* attention_matrix is not np.ndarray:
-            + attention_matrix = np.array(attention_matrix)
         + num_nodes = attention_matrix.shape[0]
         + adj_matrix = (attention_matrix > epsilon).astype(float)
         + n_components, labels = connected_components(adj_matrix, directed=False)
-        + clusters = {}
         + *For* node_idx, cluster_id in enumerate(labels):
-            + *If* cluster_id not in clusters:
-                + clusters[cluster_id] = []
             + clusters[cluster_id].append(node_idx)
         + *Return* clusters
 
     + *Static Method* create_cluster_features(h_features, clusters):
-        + *If* h_features is not np.ndarray:
-            + h_features = np.array(h_features)
-        + num_nodes = h_features.shape[0]
-        + feature_dim = h_features.shape[1]
         + cluster_feature_matrix = zeros((num_nodes, feature_dim))
         + *For* cluster_id, node_indices in clusters.items():
             + *If* node_indices is empty: *continue*
@@ -184,31 +164,26 @@
         + h_1 = concatenate(first_layer_outputs, axis=-1)
         + avg_attention = mean(stack(first_layer_attentions), axis=0)
         + avg_attention = squeeze(avg_attention, axis=0)
-        + feature_dim = hid_units[0] \* n_heads[0]
         + *Define* cluster_and_fuse(h_features, attn_matrix, eps):
             + h_features_2d = squeeze(h_features, axis=0)
             + clusters = cluster_nodes(attn_matrix, eps)
             + cluster_features = create_cluster_features(h_features_2d, clusters)
             + *Return* expand_dims(cluster_features, axis=0)
         + cluster_features = py_func(cluster_and_fuse, [h_1, avg_attention, epsilon])
-        + cluster_features.set_shape([1, nb_nodes, feature_dim])
+        + cluster_features.set_shape(1, nb_nodes, feature_dim)
         + *If* fusion_method == 'add':
             + fused_features = h_1 + cluster_features
         + *Elif* fusion_method == 'concat':
-            + fused_features = concatenate([h_1, cluster_features], axis=-1)
+            + fused_features = concatenate(h_1, cluster_features)
         + *Elif* fusion_method == 'gate':
-            + combined = concatenate([h_1, cluster_features], axis=-1)
-            + gate = dense(combined, units=feature_dim, activation=sigmoid)
-            + fused_features = gate * h_1 + (1 - gate) * cluster_features
+            + fused_features = gate \* h_1 + (1 - gate) \* cluster_features
         + *Else*:
             + fused_features = h_1
         + current_input = fused_features
         + *For* i in 1 to len(hid_units)-1:
-            + attns = []
             + *For* n_heads[i] times:
                 + attns.append
             + current_input = concatenate(attns, axis=-1)
-        + out = []
         + *For* n_heads[-1] times:
             + out.append
         + logits = average(out)
@@ -221,8 +196,9 @@
 
 在实验中，我们对 *GAT* 进行了修改，并进行了性能测试。实验结果表明，*GAT++* 能够在某些情况下展现出更好的性能。
 
-==== “砍边”法
+==== Cora 数据集
 
+===== GATcut
 
 #table3(
   align: center,
@@ -243,10 +219,9 @@
   [0.2], [15], [0.7760], [0.7740],
 )
 
+表现最好的参数组合为 $epsilon=0.15$，top_k $=5$，其 Val Acc 为 0.8140，Test Acc 为 0.8250。
 
-
-
-==== 基于广度优先搜索
+===== GATbfs
 
 #table3(
   align: center,
@@ -267,8 +242,9 @@
   [0.3], [3], [0.8200], [0.8210],
 )
 
+表现最好的参数组合为 $epsilon=0.15$，max_hops $=3$，其 Val Acc 为 0.8220，Test Acc 为 0.8190。
 
-==== 基于并查集算法
+===== GATdsu
 
 #table3(
   align: center,
@@ -295,4 +271,129 @@
   [0.3], [gate], [0.8260], [0.8070],
 )
 
+表现最好的参数组合为 $epsilon=0.1$，融合方式为 gate，其 Val Acc 为 0.8260，Test Acc 为 0.8280。
 
+===== 比较
+
+#table3(
+  align: center,
+  columns: (1.5fr, 1fr, 1fr),
+  inset: 10pt,
+  [方法], [Val Acc], [Test Acc],
+  [GAT], [0.8080], [0.8180],
+  [GAT++(cut)], [0.8140], [0.8250],
+  [GAT++(bfs)], [0.8220], [0.8190],
+  [GAT++(dsu)], [0.8260], [0.8280],
+  [GATv2], [0.8240], [0.8460],
+  [SuperGAT-MX], [0.8140], [0.8160],
+  [SuperGAT-SD], [0.8220], [0.8210],
+)
+
+
+==== Citeseer 数据集
+
+===== GATcut
+
+#table3(
+  align: center,
+  columns: (1fr, 1fr, 1fr, 1fr),
+  inset: 10pt,
+  [neighbor\_threshold], [top\_k], [Val Acc], [Test Acc],
+  [0.0], [5], [0.6860], [0.6820],
+  [0.0], [10], [0.5960], [0.5920],
+  [0.0], [15], [0.4920], [0.5100],
+  [0.1], [5], [0.7140], [0.7000],
+  [0.1], [10], [0.6680], [0.6430],
+  [0.1], [15], [0.6320], [0.6310],
+  [0.15], [5], [0.7220], [0.7120],
+  [0.15], [10], [0.6560], [0.6560],
+  [0.15], [15], [0.5860], [0.5860],
+  [0.2], [5], [0.6620], [0.6590],
+  [0.2], [10], [0.6680], [0.6900],
+  [0.2], [15], [0.6280], [0.6080],
+)
+
+表现最好的参数组合为 neighbor\_threshold $=0.15$，top\_k $=5$，其 Val Acc 为 0.7220，Test Acc 为 0.7120。
+
+===== GATbfs
+
+#table3(
+  align: center,
+  columns: (1fr, 1fr, 1fr, 1fr),
+  inset: 10pt,
+  [$epsilon$], [max\_hops], [Val Acc], [Test Acc],
+  [0.0], [2], [0.2320], [0.1810],
+  [0.0], [3], [0.2320], [0.1810],
+  [0.1], [2], [0.7360], [0.7170],
+  [0.1], [3], [0.7320], [0.7250],
+  [0.15], [2], [0.7400], [0.7320],
+  [0.15], [3], [0.7420], [0.7210],
+  [0.2], [2], [0.7460], [0.7170],
+  [0.2], [3], [0.7420], [0.7160],
+  [0.25], [2], [0.7440], [0.7310],
+  [0.25], [3], [0.7320], [0.7240],
+  [0.3], [2], [0.7300], [0.7150],
+  [0.3], [3], [0.7300], [0.7270],
+)
+
+表现最好的参数组合为 $epsilon=0.1$，max_hops $=3$，其 Val Acc 为 0.7460，Test Acc 为 0.7170。
+
+===== GATdsu
+
+#table3(
+  align: center,
+  columns: (1fr, 1fr, 1fr, 1fr),
+  inset: 10pt,
+  [$epsilon$], [fusion\_method], [Val Acc], [Test Acc],
+  [0.05], [add], [0.7420], [0.7220],
+  [0.05], [concat], [0.7300], [0.7200],
+  [0.05], [gate], [0.7440], [0.7450],
+  [0.1], [add], [0.7340], [0.7360],
+  [0.1], [concat], [0.7440], [0.7240],
+  [0.1], [gate], [0.7440], [0.7330],
+  [0.15], [add], [0.7300], [0.7110],
+  [0.15], [concat], [0.7360], [0.7280],
+  [0.15], [gate], [0.7400], [0.7140],
+  [0.2], [add], [0.7240], [0.7080],
+  [0.2], [concat], [0.7400], [0.7190],
+  [0.2], [gate], [0.7340], [0.7250],
+  [0.25], [add], [0.7320], [0.7180],
+  [0.25], [concat], [0.7440], [0.7370],
+  [0.25], [gate], [0.7420], [0.7210],
+  [0.3], [add], [0.7320], [0.7080],
+  [0.3], [concat], [0.7400], [0.7090],
+  [0.3], [gate], [0.7380], [0.7180],
+)
+
+表现最好的参数组合为 $epsilon=0.05$，fusion\_method 为 gate，其 Val Acc 为 0.7440，Test Acc 为 0.7450。
+
+===== 比较
+
+#table3(
+  align: center,
+  columns: (1.5fr, 1fr, 1fr),
+  inset: 10pt,
+  [方法], [Val Acc], [Test Acc],
+  [GAT], [0.7380], [0.7270],
+  [GAT++(cut)], [0.7220], [0.7120],
+  [GAT++(bfs)], [0.7460], [0.7170],
+  [GAT++(dsu)], [0.7440], [0.7450],
+  [GATv2], [0.8000], [0.7830],
+  [SuperGAT-MX], [0.7300], [0.7280],
+  [SuperGAT-SD], [0.7500], [0.7170],
+)
+
+==== Pubmed 数据集
+
+===== 比较
+
+#table3(
+  align: center,
+  columns: (1.5fr, 1fr, 1fr),
+  inset: 10pt,
+  [方法], [Val Acc], [Test Acc],
+  [GAT], [0.8040], [0.7750],
+  [GATv2], [0.8000], [0.7830],
+  [SuperGAT-MX], [0.7980], [0.7740],
+  [SuperGAT-SD], [0.8120], [0.7800],
+)

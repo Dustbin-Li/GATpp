@@ -5,12 +5,11 @@ import tensorflow as tf
 import argparse
 
 from models import GAT
-from models import SpGATbfs
 from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
 
-dataset = 'pubmed'
+dataset = 'cora' # or 'citeseer' or 'pubmed'
 
 # training params
 batch_size = 1
@@ -22,8 +21,7 @@ hid_units = [8] # numbers of hidden units per each attention head in each layer
 n_heads = [8, 1] # additional entry for the output layer
 residual = False
 nonlinearity = tf.nn.elu
-# model = GAT
-model = SpGATbfs
+model = GAT
 
 print('Dataset: ' + dataset)
 print('----- Opt. hyperparams -----')

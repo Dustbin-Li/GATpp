@@ -10,10 +10,10 @@ from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
 
-dataset = 'citeseer'
+dataset = 'cora' # or 'citeseer' or 'pubmet'
 
 # training params
-methods = 'gat'
+methods = 'gat' # or 'cut' or 'bfs' or 'dsu'
 batch_size = 1
 nb_epochs = 100000
 patience = 100
