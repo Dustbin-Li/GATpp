@@ -317,7 +317,7 @@ def run_parameter_search():
     best_results = {}
     
     # 为每种方法运行参数搜索
-    for method in ['cut', 'dsu', 'gat', 'bfs']:
+    for method in ['cut', 'gat']:
         print(f"\n{'='*50}")
         print(f"Starting parameter search for {method.upper()}")
         print(f"Parameter space: {PARAM_SPACES[method]}")

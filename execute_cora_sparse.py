@@ -5,7 +5,7 @@ import tensorflow as tf
 import argparse
 
 from models import GAT
-from models import SpGATcut
+from models import SpGATbfs
 from utils import process
 
 checkpt_file = 'pre_trained/cora/mod_cora.ckpt'
@@ -23,7 +23,7 @@ n_heads = [8, 1] # additional entry for the output layer
 residual = False
 nonlinearity = tf.nn.elu
 # model = GAT
-model = SpGATcut
+model = SpGATbfs
 
 print('Dataset: ' + dataset)
 print('----- Opt. hyperparams -----')
