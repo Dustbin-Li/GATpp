@@ -36,6 +36,9 @@
    可更换的数据集有：Cora、Citeseer 和 Pubmed
    可更换的方法有：gat、cut、bfs 和 dsu
 
+3. 如需要测试SuperGAT和GATv2，请参考 reproduce.txt 中的环境要求，并使用`test_super.py`和`test_v2.py`进行测试。
+
+
 ### 参考文献
 
 - [Graph Attention Networks (GAT)](https://arxiv.org/abs/1710.10903)
