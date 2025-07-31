@@ -1,0 +1,4 @@
+numpy
+scipy
+networkx
+tensorflow==1.15

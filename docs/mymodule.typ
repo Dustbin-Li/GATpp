@@ -307,16 +307,17 @@
 
 \
 
-在实验中，我们对 *GAT* 进行了修改，并进行了性能测试。实验结果表明，*GAT++* 能够在某些情况下展现出更好的性能。
+在实验中，我们对 *GAT* 进行了修改，并进行了性能测试。实验结果表明，*GAT++* 能够在某些情况下展现出更好的性能。其中，*GATcut*、*GATbfs*、*GATdsu* 分别代表了基于“砍边”、基于广度优先搜索、基于并查集算法的 *GAT++* 实现。
+
+除此之外，我们还复现了 GATv2、SuperGAT-MX、SuperGAT-SD 等模型，将这几种方法在 Cora、Citeseer 和 Pubmed 数据集上进行了测试，并对其性能进行了比较。
 
 \
 
 ==== Cora 数据集
-==== “砍边”法
-
-\
 
 ===== GATcut
+
+GATcut 在 Cora 数据集上的表现如下：
 
 #table3(
   align: center,
@@ -342,10 +343,8 @@
 
 ===== GATbfs
 
-
-==== 基于广度优先搜索
-
 \
+GATbfs 在 Cora 数据集上的表现如下：
 
 #table3(
   align: center,
@@ -370,9 +369,9 @@
 \
 
 ===== GATdsu
-==== 基于并查集算法
 
 \
+GATdsu 在 Cora 数据集上的表现如下：
 
 #table3(
   align: center,
@@ -403,6 +402,8 @@
 
 ===== 比较
 
+将 GAT、GATcut、GATbfs、GATdsu 与 GATv2、SuperGAT-MX、SuperGAT-SD 进行比较，结果如下：
+
 #table3(
   align: center,
   columns: (1.5fr, 1fr, 1fr),
@@ -417,10 +418,33 @@
   [SuperGAT-SD], [0.8220], [0.8210],
 )
 
+可以发现，GAT++(cut)、GAT++(bfs)、GAT++(dsu) 都在 Cora 数据集上都取得了更好的性能，能够超过原来 GAT 在 Cora 数据集上的性能，说明我们的修改起到了一定的作用；同时，GAT++(dsu) 的性能表现最佳，甚至能超过 SuperGAT-MX 和 SuperGAT-SD 在 Cora 数据集上的表现。但是，GATv2 在 Cora 上的表现仍是最佳。
 
 ==== Citeseer 数据集
 
+Citeseer 数据集的基本特征如下：
+
+#list(
+tight: true,
+[
+节点数: 3,327
+],
+[
+边数: 4,732
+],
+[
+类别数: 6
+],
+[
+特征维度: 3,703
+]
+)
+
+Citeseer 是一个包含科学出版物的引文网络数据集，其中每个节点代表一篇论文，每条边代表一条引用关系。节点的特征为词袋模型下的词频向量，类别为论文所属的主题类别。
+
 ===== GATcut
+
+GATcut 在 Citeseer 数据集上的表现如下：
 
 #table3(
   align: center,
@@ -445,6 +469,8 @@
 
 ===== GATbfs
 
+GATbfs 在 Citeseer 数据集上的表现如下：
+
 #table3(
   align: center,
   columns: (1fr, 1fr, 1fr, 1fr),
@@ -467,6 +493,8 @@
 表现最好的参数组合为 $epsilon=0.1$，max_hops $=3$，其 Val Acc 为 0.7460，Test Acc 为 0.7170。
 
 ===== GATdsu
+
+GATdsu 在 Citeseer 数据集上的表现如下：
 
 #table3(
   align: center,
@@ -497,6 +525,8 @@
 
 ===== 比较
 
+将 GAT、GATcut、GATbfs、GATdsu 与 GATv2、SuperGAT-MX、SuperGAT-SD 进行比较，结果如下：
+
 #table3(
   align: center,
   columns: (1.5fr, 1fr, 1fr),
@@ -511,9 +541,40 @@
   [SuperGAT-SD], [0.7500], [0.7170],
 )
 
+可以发现，GAT++(bfs) 和 GAT++(dsu) 在 Citeseer 数据集上取得了与原始 GAT 相当甚至略优的性能，尤其是 GAT++(dsu) 的 Test Acc 达到了 0.7450，略高于原始 GAT 的 0.7270，说明基于并查集的特征融合方法在该数据集上同样有效。而 GAT++(cut) 的表现略低于原始 GAT，说明“砍边”法在 Citeseer 上的提升有限。与 Cora 数据集类似，GATv2 在 Citeseer 上依然表现最佳，Test Acc 达到 0.7830，显著高于其他方法。SuperGAT-MX 和 SuperGAT-SD 的表现与 GAT++ 系列方法相近，但整体略低于 GATv2。总体来看，GAT++(dsu) 在 Citeseer 上依然展现出一定的优势，验证了该方法的有效性。
+
 ==== Pubmed 数据集
 
+===== Pubmed 数据集的特征
+
+Pubmed 数据集同样是一个常用的引文网络数据集，广泛用于图神经网络的研究。其主要特征如下：
+
+#list(
+[
+*节点数*：19,717
+],
+[
+*边数*：44,338
+],
+[
+*类别数*：3
+],
+[
+*每个节点的特征维度*：500
+],
+[
+*每个节点表示一篇论文，边表示论文之间的引用关系*
+],
+[
+*节点标签*：每个节点属于 3 个学科类别之一
+]
+)
+
+Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构建的，每个维度表示某个词是否在该论文中出现。该数据集常用于节点分类任务，即根据节点的特征和图结构预测其所属类别。
+
 ===== 比较
+
+遗憾的是，Pubmed 数据集的数据量较大，数据密集，而 GAT++ 并不能很好地适用于图结构稠密的场景，因此我们并没有做有关 GAT++ 的相关实验，而是只比较了 GAT、GATv2、SuperGAT-MX、SuperGAT-SD。
 
 #table3(
   align: center,
@@ -527,6 +588,7 @@
 )
 \
 
+可以发现，GATv2 在 Pubmed 数据集上的表现最佳，Test Acc 达到 0.7830，与 Cora 和 Citeseer 数据集相当。SuperGAT-MX 和 SuperGAT-SD 的表现与 GATv2 相似，但整体略低于 GAT。总体来看，GATv2 在 Pubmed 数据集上的表现优于其他方法。
 
 
 
