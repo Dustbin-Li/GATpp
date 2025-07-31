@@ -88,3 +88,73 @@ def sp_attn_head(seq, out_sz, adj_mat, activation, nb_nodes, in_drop=0.0, coef_d
         else :
             return activation(ret)  # activation
 
+def sp_attn_head_2(seq, out_sz, adj_mat, activation, nb_nodes, in_drop=0.0, coef_drop=0.0, residual=False, return_attn=False):
+    with tf.name_scope('sp_attn'):
+        if in_drop != 0.0:
+            seq = tf.nn.dropout(seq, 1.0 - in_drop)
+        
+        # 明确设置卷积层的输出形状
+        seq_fts = tf.layers.conv1d(seq, out_sz, 1, use_bias=False)
+        seq_fts.set_shape([seq.shape[0], nb_nodes, out_sz])  # 明确设置形状
+        
+        # 计算注意力分数
+        f_1 = tf.layers.conv1d(seq_fts, 1, 1)
+        f_1.set_shape([seq.shape[0], nb_nodes, 1])  # 明确设置形状
+        
+        f_2 = tf.layers.conv1d(seq_fts, 1, 1)
+        f_2.set_shape([seq.shape[0], nb_nodes, 1])  # 明确设置形状
+        
+        # 重塑张量并确保形状
+        f_1 = tf.reshape(f_1, (nb_nodes, 1))
+        f_1.set_shape([nb_nodes, 1])
+        
+        f_2 = tf.reshape(f_2, (nb_nodes, 1))
+        f_2.set_shape([nb_nodes, 1])
+        
+        # 计算logits
+        logits = f_1 + tf.transpose(f_2, [1, 0])  # 修正转置操作
+        logits.set_shape([nb_nodes, nb_nodes])
+        
+        logits = tf.nn.leaky_relu(logits)
+        
+        # 处理偏置矩阵
+        if adj_mat is not None:
+            if isinstance(adj_mat, tf.SparseTensor):
+                adj_mat = tf.sparse.to_dense(adj_mat)
+            if adj_mat.shape.ndims == 3:
+                adj_mat = tf.squeeze(adj_mat, axis=0)
+            adj_mat.set_shape([nb_nodes, nb_nodes])  # 明确设置形状
+            logits += adj_mat
+        
+        coefs = tf.nn.softmax(logits)
+        coefs.set_shape([nb_nodes, nb_nodes])  # 明确设置形状
+        
+        if coef_drop != 0.0:
+            coefs = tf.nn.dropout(coefs, 1.0 - coef_drop)
+        if in_drop != 0.0:
+            seq_fts = tf.nn.dropout(seq_fts, 1.0 - in_drop)
+        
+        # 重塑并确保形状
+        coefs = tf.expand_dims(coefs, 0)
+        coefs.set_shape([1, nb_nodes, nb_nodes])
+        
+        seq_fts = tf.reshape(seq_fts, [1, nb_nodes, out_sz])  # 确保三维
+        vals = tf.matmul(coefs, seq_fts)
+        vals.set_shape([1, nb_nodes, out_sz])  # 关键修复：明确设置形状
+        
+        # 添加偏置 - 现在形状已完全指定
+        ret = tf.contrib.layers.bias_add(vals)
+        
+        # 残差连接
+        if residual:
+            if seq.shape[-1] != ret.shape[-1]:
+                res = conv1d(seq, ret.shape[-1], 1)
+                res.set_shape([1, nb_nodes, out_sz])
+                ret += res
+            else:
+                ret += seq
+        
+        if return_attn:
+            return activation(ret), coefs
+        else:
+            return activation(ret)

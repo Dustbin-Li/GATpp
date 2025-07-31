@@ -27,7 +27,8 @@ class SpGATbfs(BaseGAttN):
             tf.ones_like(reachability, dtype=tf.float32) * -1e9
         )
         
-        return bias_mat[tf.newaxis, :, :]
+        # return bias_mat[tf.newaxis, :, :]
+        return bias_mat
 
     @staticmethod
     def inference(inputs, nb_classes, nb_nodes, training, attn_drop, ffd_drop,
@@ -36,9 +37,10 @@ class SpGATbfs(BaseGAttN):
         all_attention_maps = []
         attns_output = []
         attns_coefs = []
-        
+        if bias_mat is not None and bias_mat.shape.ndims == 3:
+            bias_mat = tf.squeeze(bias_mat, axis=0)  # 压缩成二维
         for _ in range(n_heads[0]):
-            output, coef = layers.sp_attn_head(
+            output, coef = layers.sp_attn_head_2(
                 inputs,
                 out_sz=hid_units[0],
                 adj_mat=bias_mat,
@@ -50,7 +52,7 @@ class SpGATbfs(BaseGAttN):
                 return_attn=True
             )
             attns_output.append(output)
-            attns_coefs.append(tf.sparse.to_dense(coef))
+            attns_coefs.append(coef)
         
         h_1 = tf.concat(attns_output, axis=-1)
         avg_attention = tf.reduce_mean(tf.stack(attns_coefs), axis=0)
@@ -68,7 +70,7 @@ class SpGATbfs(BaseGAttN):
             attns_output = []
             attns_coefs = []
             for _ in range(n_heads[i]):
-                output, coef = layers.sp_attn_head(
+                output, coef = layers.sp_attn_head_2(
                     h_1, 
                     adj_mat=new_bias_mat,
                     out_sz=hid_units[i], 
@@ -80,7 +82,7 @@ class SpGATbfs(BaseGAttN):
                     return_attn=True
                 )
                 attns_output.append(output)
-                attns_coefs.append(tf.sparse.to_dense(coef))
+                attns_coefs.append(coef)
             h_1 = tf.concat(attns_output, axis=-1)
             avg_attention = tf.reduce_mean(tf.stack(attns_coefs), axis=0)
             all_attention_maps.append(avg_attention)
@@ -94,7 +96,7 @@ class SpGATbfs(BaseGAttN):
             
         out = []
         for i in range(n_heads[-1]):
-            out.append(layers.sp_attn_head(
+            out.append(layers.sp_attn_head_2(
                 h_1, 
                 adj_mat=new_bias_mat,
                 out_sz=nb_classes, 
