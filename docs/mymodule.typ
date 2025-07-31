@@ -70,6 +70,74 @@
 
 综上所述，当前GNN的研究已经从早期的静态卷积发展到以GAT为代表的动态注意力机制，并进一步演化出了GATv2和SuperGAT等更具表达力和适应性的高级变体。同时，围绕深度、可扩展性和鲁棒性等关键问题也形成了一系列成熟的解决方案。本实验正是在这一坚实的研究基础上，系统地将这些先进的优化策略应用于GAT模型，并与GATv2、SuperGAT等模型进行对比，以期获得性能上的显著提升。
 
+
+\
+
+=== 实验数据集
+
+\
+
+为了客观、全面地评估模型的性能，本实验采用了三个图神经网络领域公认的基准引文网络数据集：Cora、CiteSeer 和 PubMed。这三个数据集均源于 Planetoid 项目，是半监督节点分类任务中最常用的测评标准。它们的共同特点是：图中的节点代表学术论文，边代表论文之间的引用关系，每个节点都包含一个高维的词袋模型（Bag-of-Words）或TF-IDF特征向量，并被赋予一个研究领域的标签。
+
+实验任务是在仅有少量节点标签已知的情况下，对网络中其他所有节点的类别进行预测。我们遵循标准的Planetoid数据集划分方法，即每类仅使用20个节点作为训练集，500个节点作为验证集，1000个节点作为测试集。
+
+以下是三个数据集的详细介绍：
+
+\
+
+==== Cora
+
+\
+
+Cora 数据集是一个关于计算机科学论文的引文网络。网络中的每篇论文都属于七个研究领域中的一个。如果论文A引用了论文B，则在图中存在一条从A到B的有向边。数据集经过预处理后，移除了词典中出现次数少于10次的词语。
+
+\
+
+- 节点 (Nodes): 2,708篇学术论文。
+
+- 边 (Edges): 5,429条引用关系。
+
+- 节点特征 (Features): 一个1,433维的二进制特征向量，每一维对应一个词典中的词语，1或0表示该词语是否出现在论文的摘要中。
+
+- 类别 (Classes): 7个类别，包括神经网络、强化学习、遗传算法等。
+
+==== CiteSeer
+
+\
+
+CiteSeer 数据集同样是一个引文网络，规模和复杂度与Cora相近。它包含了六个不同研究领域的科学出版物。相比Cora，CiteSeer的图结构连接更为稀疏。
+
+- 节点 (Nodes): 3,327篇学术论文。
+
+- 边 (Edges): 4,732条引用关系。
+
+- 节点特征 (Features): 一个3,703维的二进制特征向量，表示论文是否包含词典中的特定词语。
+
+- 类别 (Classes): 6个类别，包括人工智能、数据库、机器学习等。
+
+==== PubMed
+
+\
+
+PubMed 数据集源自生物医学领域的权威数据库PubMed。它包含的节点和边的数量远超Cora和CiteSeer，是一个规模更大的引文网络。该数据集主要关注于糖尿病相关的研究论文。
+
+
+\
+
+- 节点 (Nodes): 19,717篇关于糖尿病的学术论文。
+
+- 边 (Edges): 44,338条引用关系。
+
+- 节点特征 (Features): 一个500维的TF-IDF（词频-逆文档频率）特征向量，代表了论文摘要中词语的重要性。
+
+- 类别 (Classes): 3个类别，分别对应三种不同类型的糖尿病研究。
+
+\
+
+通过这三个具有不同规模、稀疏度和特征维度的数据集，我们可以更全面地检验GAT及其改进模型在各种场景下的性能、鲁棒性和泛化能力。
+
+
+
 == 实验与分析
 
 === 实验思路
@@ -422,25 +490,6 @@ GATdsu 在 Cora 数据集上的表现如下：
 
 ==== Citeseer 数据集
 
-Citeseer 数据集的基本特征如下：
-
-#list(
-tight: true,
-[
-节点数: 3,327
-],
-[
-边数: 4,732
-],
-[
-类别数: 6
-],
-[
-特征维度: 3,703
-]
-)
-
-Citeseer 是一个包含科学出版物的引文网络数据集，其中每个节点代表一篇论文，每条边代表一条引用关系。节点的特征为词袋模型下的词频向量，类别为论文所属的主题类别。
 
 ===== GATcut
 
@@ -545,32 +594,6 @@ GATdsu 在 Citeseer 数据集上的表现如下：
 
 ==== Pubmed 数据集
 
-===== Pubmed 数据集的特征
-
-Pubmed 数据集同样是一个常用的引文网络数据集，广泛用于图神经网络的研究。其主要特征如下：
-
-#list(
-[
-*节点数*：19,717
-],
-[
-*边数*：44,338
-],
-[
-*类别数*：3
-],
-[
-*每个节点的特征维度*：500
-],
-[
-*每个节点表示一篇论文，边表示论文之间的引用关系*
-],
-[
-*节点标签*：每个节点属于 3 个学科类别之一
-]
-)
-
-Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构建的，每个维度表示某个词是否在该论文中出现。该数据集常用于节点分类任务，即根据节点的特征和图结构预测其所属类别。
 
 ===== 比较
 
@@ -590,24 +613,109 @@ Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构�
 
 可以发现，GATv2 在 Pubmed 数据集上的表现最佳，Test Acc 达到 0.7830，与 Cora 和 Citeseer 数据集相当。SuperGAT-MX 和 SuperGAT-SD 的表现与 GATv2 相似，但整体略低于 GAT。总体来看，GATv2 在 Pubmed 数据集上的表现优于其他方法。
 
-
-=== 不足与展望
-
-\
-
-在实验结果的反馈中，我们可以清楚的发现在面对较大数据集PubMed时，无论是我们的GAT++还是各类改进模型，都没有表现出良好的性能，因此在sparse数据集中，我们提出了以下构想，称为SparseGAT++。
+针对稀疏的数据集PubMed，我们考虑对GAT本身的sparse版本进行改进，设计了SparseGAT++系列方法。虽然由于计算复杂度等技术挑战，这些方法在大规模数据集上遇到了实施困难，但我们的探索为稀疏图神经网络的优化提供了有价值的技术路径。
 
 \
 
-针对稀疏的数据集
+=== SparseGAT++ 的探索与技术挑战
+
+\ 
+
+在处理稀疏图时，我们可以看到我们的方法对PubMed数据集的性能提升有限。因此我们尝试对GAT的sparse版本进行改进，设计了SparseGAT++系列方法。
 
 
 
 
+==== 技术实现与算法设计
+
+\
+
+与GAT++类似，我们设计了三种方法：
+
+- SpGATcut：稀疏砍边法
+- SpGATbfs：广度优先搜索扩展
+- SpGATdsu：并查集特征融合
 
 
 
-== 引用文献
+*SpGATcut（稀疏砍边法）*：
+
+#codex("def create_filtered_bias(atten_coefs, neighbor_threshold, top_k_neighbors, nb_nodes):
+def create_filtered_bias(atten_coefs, neighbor_threshold, top_k_neighbors, nb_nodes):
+    # 阈值过滤：保留 α_ij > threshold 的边
+    threshold_mask = atten_coefs > neighbor_threshold
+    # Top-k过滤：保留每个节点最重要的k个邻居
+    top_values, top_indices = tf.math.top_k(atten_coefs, k=top_k+1)
+    # 构建过滤后的偏置矩阵
+    bias_mat = tf.where(threshold_mask, 0.0, -1e9)
+", lang: "python")
+
+该方法的核心思想是在每层注意力计算后，动态过滤低重要性的边连接，减少噪声传播。
+
+\
+
+*SpGATbfs（广度优先搜索扩展）*：
+  
+#codex("def create_bfs_bias(atten_coefs, epsilon, max_hops, nb_nodes):
+    # 构建可达性矩阵：基于注意力权重的图遍历
+    adj_bool = (atten_coefs >= epsilon)
+    reachability = tf.eye(nb_nodes)
+    for _ in range(max_hops):
+        next_reach = tf.matmul(reachability, adj_int)
+        reachability = tf.clip_by_value(reachability + next_reach, 0, 1)", lang: "python")
+
+
+该方法通过矩阵乘法迭代计算多跳可达性，将感知野从直接邻居扩展到高相关性的间接邻居。
+
+\
+
+*SpGATdsu（并查集特征融合）*：
+
+#codex("def cluster_and_fuse(h_features, attn_matrix, epsilon):
+    # 基于注意力权重构建邻接图
+    adj_matrix = (attention_matrix > epsilon).astype(float)
+    # 计算连通分量（并查集思想）
+    n_components, labels = connected_components(adj_matrix)
+    # 为每个聚类计算平均特征
+    cluster_features = compute_cluster_means(h_features, labels)
+    # 门控融合机制
+    gate = sigmoid(dense_layer(concat(h_features, cluster_features)))
+    return gate * h_features + (1-gate) * cluster_features", lang: "python")
+
+
+
+该方法将高相关性节点聚合成集合，通过集合级特征增强个体节点的表征能力。
+
+\
+
+==== 技术挑战与复杂度分析
+
+\
+
+在实现过程中，我们遇到了以下关键技术挑战：
+
+*内存复杂度*：PubMed数据集包含约20K节点，需要存储20K×20K的注意力矩阵（约1.6GB），超出了单GPU内存限制。特别是SpGATbfs的多跳可达性计算需要O(N³)的时间复杂度和O(N²)的空间复杂度。
+
+*计算效率*：SpGATcut的top-k选择在稀疏矩阵上需要O(N²logN)复杂度；SpGATdsu的连通分量计算虽然理论上是O(N²)，但在TensorFlow 1.x的tf.py_func实现下存在严重的性能瓶颈。
+
+*稀疏性处理*：原始GAT使用稀疏矩阵优化，但我们的改进算法需要频繁的稠密矩阵运算（如矩阵乘法、top-k选择），破坏了稀疏性优势。
+
+==== 改进方向与技术展望
+
+基于这次探索，我们识别出稀疏图神经网络优化的关键方向：
+
+1. *层次化计算*：将大图分解为多个重叠的子图块，分层处理后合并结果
+2. *采样近似*：使用邻居采样或重要性采样减少计算规模  
+3. *硬件优化*：开发GPU友好的稀疏张量操作，避免稠密转换开销
+4. *渐进式训练*：从核心子图开始训练，逐步扩展到完整图结构
+
+虽然当前的SparseGAT++实现在工程上遇到了挑战，但这些探索验证了改进策略的理论可行性，为大规模稀疏图神经网络的发展提供了重要的技术积累和改进思路。在未来的工作中，结合更先进的稀疏计算框架和分布式训练技术，这些方法有望在大规模实际应用中发挥价值。
+
+
+\
+
+
+=== 引用文献
 
 - [1] NodeFormer: A Scalable Graph Structure Learning Transformer forNode Classification
 - [2] GraphMAE: Self-Supervised Masked Graph Autoencoders
@@ -615,3 +723,6 @@ Pubmed 数据集的节点特征同样是基于词袋模型（Bag-of-Words）构�
 - [4] Graph Attention Networks
 - [5] Graph Attention Networks v2
 - [6] HOW TO FIND YOUR FRIENDLY NEIGHBORHOOD: GRAPHATTENTION DESIGN WITH SELF-SUPERVISION
+- [7] Planetoid: A benchmark dataset for graph classification
+
+
